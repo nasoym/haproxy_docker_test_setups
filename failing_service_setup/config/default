@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+fail_rate="$(curl -s "http://consul:8500/v1/kv/$(hostname)_fail_rate?raw=true")"
+: ${fail_rate:="0"}
+
+if [[ ${fail_rate} -eq 0 ]];then
+  printf "Status: 200 OK\n"
+  printf "Content-type: text/plain; charset=iso-8859-1\n"
+  printf "\n"
+  printf "SUCCESS $(hostname)\n"
+elif [[ $(( $RANDOM % ${fail_rate} )) -eq 0 ]];then
+  printf "Status: 200 OK\n"
+  printf "Content-type: text/plain; charset=iso-8859-1\n"
+  printf "\n"
+  printf "FAILURE $(hostname)\n"
+else
+  printf "Status: 200 OK\n"
+  printf "Content-type: text/plain; charset=iso-8859-1\n"
+  printf "\n"
+  printf "SUCCESS $(hostname)\n"
+fi
+
+

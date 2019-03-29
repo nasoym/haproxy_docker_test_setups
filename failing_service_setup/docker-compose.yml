@@ -1,0 +1,38 @@
+version: '3'
+services:
+  consul:
+    image: consul:1.4.4
+    hostname: consul
+    ports:
+      - 8500:8500
+    command: agent -dev -ui -server -bootstrap-expect=1 -client=0.0.0.0
+
+  haproxy:
+    image: haproxy:1.9.5
+    hostname: haproxy
+    volumes:
+      - ./config/:/usr/local/etc/haproxy/config
+    ports:
+      - 8080:80
+      - 8081:81
+    command: -f /usr/local/etc/haproxy/config/haproxy.cfg 
+
+  service_1:
+    image: nasoym/httpd-cgi:latest
+    hostname: service_1
+    volumes:
+      - ./config/:/usr/local/apache2/cgi-bin/
+    ports:
+      - "80"
+    command: /bin/sh -c "apk update; apk add curl; /usr/local/apache2/cgi_env"
+
+  service_2:
+    image: nasoym/httpd-cgi:latest
+    hostname: service_2
+    volumes:
+      - ./config/:/usr/local/apache2/cgi-bin/
+    ports:
+      - "80"
+    command: /bin/sh -c "apk update; apk add curl; /usr/local/apache2/cgi_env"
+
+
